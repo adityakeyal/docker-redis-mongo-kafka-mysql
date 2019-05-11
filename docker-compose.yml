@@ -1,24 +1,24 @@
 version: '2'
 services:
   zookeeper:
-    image: wurstmeister/zookeeper
-  kafka:
-    build: ./kafka-docker/.
+    image: 'bitnami/zookeeper:latest'
     ports:
-      - "9092:9092"
+      - '2181:2181'
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: localhost
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
   redis:
     build: ./redis-docker/
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - '6379:6379'
-    volumes:
-      - /redis.conf:/usr/local/etc/redis/redis.conf
   mongo:
     image: mongo:4.0.9-xenial
     command: --smallfiles
@@ -28,10 +28,10 @@ services:
     build: ./mysql-docker/.
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 
-      MYSQL_DATABASE: 
-      MYSQL_USER: 
-      MYSQL_PASSWORD: 
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ukory
+      MYSQL_USER: ukoryuser
+      MYSQL_PASSWORD: ukorypassw0rd
     ports:
         - '3306:3306'
     volumes:
